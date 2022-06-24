@@ -41,56 +41,58 @@
 
 /** ======================= **/
 
-const start_location = { lat: 13.7994835, lng: 100.5517634 };
-const end_location = { lat: 13.7993519, lng: 100.5489429 };
-// const start_location = { lat: 13.799495006682049, lng: 100.55175900124837 };
-// const end_location = { lat: 13.799381107977442, lng: 100.54898478584 };
-const distance_GGL = { text: "0.5 km", value: 517 };
+// const start_location = { lat: 13.7994835, lng: 100.5517634 };
+// const end_location = { lat: 13.7993519, lng: 100.5489429 };
+// // const start_location = { lat: 13.799495006682049, lng: 100.55175900124837 };
+// // const end_location = { lat: 13.799381107977442, lng: 100.54898478584 };
+// const distance_GGL = { text: "0.5 km", value: 517 };
 
-// const getEstimatedDistanceBetweenPoints = (currentLatlon, lastLatLon) => {
-//   dif_lat = lastLatLon.lat - currentLatlon.lat;
-//   dif_lng = lastLatLon.lng - currentLatlon.lng;
+// // const getEstimatedDistanceBetweenPoints = (currentLatlon, lastLatLon) => {
+// //   dif_lat = lastLatLon.lat - currentLatlon.lat;
+// //   dif_lng = lastLatLon.lng - currentLatlon.lng;
 
-//   console.log({ dif_lat, dif_lng });
+// //   console.log({ dif_lat, dif_lng });
 
-//   return Math.sqrt(Math.pow(dif_lat, 2) + Math.pow(dif_lng, 2)) * 1.113195e5;
-// };
+// //   return Math.sqrt(Math.pow(dif_lat, 2) + Math.pow(dif_lng, 2)) * 1.113195e5;
+// // };
 
-// const distance_CAL = getEstimatedDistanceBetweenPoints(
-//   start_location,
-//   end_location
-// );
-// console.log(distance_CAL);
+// // const distance_CAL = getEstimatedDistanceBetweenPoints(
+// //   start_location,
+// //   end_location
+// // );
+// // console.log(distance_CAL);
 
+// // if (distance_GGL.value > 300) {
+// //   let countOfPoints_GGL = Math.round(distance_GGL.value / 300);
+// //   console.log("countOfPoints_GGL", countOfPoints_GGL);
+
+// //   if (countOfPoints_GGL > 1) {
+// //     let latDiff = (end_location.lat - start_location.lat) / countOfPoints_GGL;
+// //     let lonDiff = (end_location.lng - start_location.lng) / countOfPoints_GGL;
+
+// //     for (let x = 0; x < countOfPoints_GGL; x++) {
+// //       let aveLat = start_location.lat + latDiff * x;
+// //       let aveLon = start_location.lng + lonDiff * x;
+
+// //       console.log({ aveLat, aveLon });
+// //     }
+// //   }
+// // }
 // if (distance_GGL.value > 300) {
 //   let countOfPoints_GGL = Math.round(distance_GGL.value / 300);
 //   console.log("countOfPoints_GGL", countOfPoints_GGL);
 
 //   if (countOfPoints_GGL > 1) {
-//     let latDiff = (end_location.lat - start_location.lat) / countOfPoints_GGL;
-//     let lonDiff = (end_location.lng - start_location.lng) / countOfPoints_GGL;
+//     let latDiff = (start_location.lat - end_location.lat) / countOfPoints_GGL;
+//     let lonDiff = (start_location.lng - end_location.lng) / countOfPoints_GGL;
 
-//     for (let x = 0; x < countOfPoints_GGL; x++) {
-//       let aveLat = start_location.lat + latDiff * x;
-//       let aveLon = start_location.lng + lonDiff * x;
+//     for (let x = 1; x < countOfPoints_GGL; x++) {
+//       let aveLat = end_location.lat + latDiff * x;
+//       let aveLon = end_location.lng + lonDiff * x;
 
 //       console.log({ aveLat, aveLon });
 //     }
 //   }
 // }
-if (distance_GGL.value > 300) {
-  let countOfPoints_GGL = Math.round(distance_GGL.value / 300);
-  console.log("countOfPoints_GGL", countOfPoints_GGL);
 
-  if (countOfPoints_GGL > 1) {
-    let latDiff = (start_location.lat - end_location.lat) / countOfPoints_GGL;
-    let lonDiff = (start_location.lng - end_location.lng) / countOfPoints_GGL;
-
-    for (let x = 1; x < countOfPoints_GGL; x++) {
-      let aveLat = end_location.lat + latDiff * x;
-      let aveLon = end_location.lng + lonDiff * x;
-
-      console.log({ aveLat, aveLon });
-    }
-  }
-}
+/** ======================= **/

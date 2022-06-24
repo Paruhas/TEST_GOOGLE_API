@@ -178,3 +178,15 @@ exports.getAllowDecimal = (input1) => {
 
   return res;
 };
+
+exports.roundNumber = (input1) => {
+  let res = new Decimal(input1).round().toFixed();
+
+  const res_decimalPlaces = new Decimal(res).decimalPlaces();
+
+  if (new Decimal(res_decimalPlaces).greaterThan(8)) {
+    res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+  }
+
+  return res;
+};

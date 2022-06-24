@@ -22,7 +22,8 @@ exports.getSnapToRoads = async (PATH) => {
         throw new Error("PATH must be Array.");
         break;
 
-      case PATH && !PATH.length > 1:
+      // case PATH && !PATH.length > 1:
+      case PATH && !Decimal.OP(PATH.length, 1, ">"):
         throw new Error(
           "PATH Array require to has/have length greaterThan or equal 2."
         );
@@ -218,7 +219,7 @@ exports.getBetweenPoint = (DISTANCE, START_LOCATION_OBJ, END_LOCATION_OBJ) => {
     );
 
     // let countOfPoints = Math.round(DISTANCE / 300);
-    let countOfPoints = Math.round(Decimal.div(DISTANCE, 300));
+    let countOfPoints = Decimal.roundNumber(Decimal.div(DISTANCE, 300));
     // console.log("countOfPoints", countOfPoints);
 
     // if (countOfPoints > 1) {
