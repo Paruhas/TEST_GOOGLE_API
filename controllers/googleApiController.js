@@ -183,7 +183,11 @@ exports.getFullPath = async (req, res, next) => {
       throw new Error("Error GOOGLE_API at 'Roads API'.");
     }
 
-    return res.status(200).json({ res: FETCH_google_SnapToRoads });
+    return res.status(200).json({
+      res_code: "0000",
+      res_message: `Request successful.`,
+      res_data: FETCH_google_SnapToRoads.data,
+    });
   } catch (error) {
     next(error);
   }
