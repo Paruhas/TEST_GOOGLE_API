@@ -1,3 +1,4 @@
+const { default: Decimal } = require("decimal.js");
 const Location_OBJ = require("../utils/Class/Location_OBJ.js");
 const GoogleAPI = require("../utils/Function/GoogleAPI.js");
 
@@ -95,16 +96,29 @@ exports.getFullPath = async (req, res, next) => {
        * IF; current [x] & next [x] maneuver === "uturn-XXX"
        * => SKIP;
        */
-      if (Boolean(data_x.maneuver && data_x.maneuver.search("uturn") !== -1)) {
+      // if (Boolean(data_x.maneuver && data_x.maneuver.search("uturn") !== -1)) {
+      if (
+        Boolean(
+          data_x.maneuver &&
+            Decimal.OP(data_x.maneuver.search("uturn"), -1, " !=")
+        )
+      ) {
         continue;
       }
       if (
         Boolean(
           copied_FETCH_google_Directions_steps[x + 1] &&
             copied_FETCH_google_Directions_steps[x + 1].maneuver &&
-            copied_FETCH_google_Directions_steps[x + 1].maneuver.search(
-              "uturn"
-            ) !== -1
+            // copied_FETCH_google_Directions_steps[x + 1].maneuver.search(
+            //   "uturn"
+            // ) !== -1
+            Decimal.OP(
+              copied_FETCH_google_Directions_steps[x + 1].maneuver.search(
+                "uturn"
+              ),
+              -1,
+              "!="
+            )
         )
       ) {
         continue;
@@ -119,7 +133,8 @@ exports.getFullPath = async (req, res, next) => {
         Boolean(
           data_x.distance &&
             data_x.distance.value &&
-            data_x.distance.value > 300
+            // data_x.distance.value > 300
+            Decimal.OP(data_x.distance.value, 300, ">")
         )
       ) {
         // console.log(data_x);
@@ -153,7 +168,7 @@ exports.getFullPath = async (req, res, next) => {
           break;
 
         case DISTANCE_EXCEED_300 === true:
-          const a = GoogleAPI.getBetweenPoint(
+          const getLatLngBetweenPoint = GoogleAPI.getBetweenPoint(
             data_x.distance.value,
             new Location_OBJ(
               data_x.start_location.lat,
@@ -162,15 +177,14 @@ exports.getFullPath = async (req, res, next) => {
             new Location_OBJ(data_x.end_location.lat, data_x.end_location.lng)
           );
 
-          if (a.isError === true) {
+          if (getLatLngBetweenPoint.isError === true) {
             throw new Error("Error GOOGLE_API at 'getBetweenPoint'");
           }
           // console.log(a.data);
 
-          a.data.forEach((item) => {
+          getLatLngBetweenPoint.data.forEach((item) => {
             ARR_PATH.push(item);
           });
-
           break;
 
         default:
@@ -183,10 +197,12 @@ exports.getFullPath = async (req, res, next) => {
       throw new Error("Error GOOGLE_API at 'Roads API'.");
     }
 
+    result.snappedPoints = FETCH_google_SnapToRoads.data.snappedPoints;
+
     return res.status(200).json({
       res_code: "0000",
       res_message: `Request successful.`,
-      res_data: FETCH_google_SnapToRoads.data,
+      res_data: result,
     });
   } catch (error) {
     next(error);
