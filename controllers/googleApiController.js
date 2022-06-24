@@ -1,4 +1,4 @@
-const { default: Decimal } = require("decimal.js");
+const Decimal = require("../utils/Decimal");
 const Location_OBJ = require("../utils/Class/Location_OBJ.js");
 const GoogleAPI = require("../utils/Function/GoogleAPI.js");
 
