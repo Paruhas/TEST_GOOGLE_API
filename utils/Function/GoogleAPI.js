@@ -60,6 +60,7 @@ exports.getSnapToRoads = async (PATH) => {
 
     res.isError = false;
     res.data = FETCH.data;
+    res.url = configs.url;
   } catch (error) {
     console.log(error.message);
 
@@ -132,6 +133,7 @@ exports.getDirections = async (STARTING_POINT, DESTINATION_POINT) => {
 
     res.isError = false;
     res.data = FETCH.data;
+    res.url = configs.url;
   } catch (error) {
     console.log(error.message);
 
