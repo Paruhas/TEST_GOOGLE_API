@@ -1,3 +1,9 @@
+const Decimal = require("./utils/Decimal");
+
+console.log(Decimal.mul(20830.48571, 0.007));
+
+/** ======================= **/
+
 // const test_dest = {
 //   distance: { text: "0.5 km", value: 517 },
 //   duration: { text: "3 mins", value: 184 },
@@ -96,3 +102,50 @@
 // }
 
 /** ======================= **/
+
+snappedPoints = [];
+
+const arr_snap_set = [];
+const arr = [];
+let URL_params = "";
+
+for (let x = 0; x < snappedPoints.length; x++) {
+  data_x = snappedPoints[x].location;
+
+  const ASS_index = arr_snap_set.length - 1;
+
+  if (ASS_index > -1) {
+    if (
+      arr_snap_set[ASS_index].location.latitude === data_x.latitude &&
+      arr_snap_set[ASS_index].location.longitude === data_x.longitude
+    ) {
+      continue;
+    }
+  }
+  arr_snap_set.push(snappedPoints[x]);
+
+  URL_params = URL_params + data_x.latitude + "," + data_x.longitude + "/";
+
+  if (arr_snap_set.length % 10 === 0) {
+    arr.push(URL_params);
+    URL_params = "";
+  }
+}
+
+// console.log("snappedPoints", snappedPoints.length);
+// console.log("arr_snap_set", arr_snap_set.length);
+// console.log("arr", arr.length);
+
+const deleyFn = (item, x) => {
+  setTimeout(() => {
+    // console.log("https://www.google.co.th/maps/dir/" + item);
+
+    window.open("https://www.google.co.th/maps/dir/" + item);
+  }, 1000 * (x + 1));
+};
+
+for (let x = 0; x < arr.length; x++) {
+  const data_x = arr[x];
+
+  deleyFn(arr[x], x);
+}

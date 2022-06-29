@@ -49,6 +49,8 @@ exports.getFullPath = async (req, res, next) => {
       throw new Error("Error GOOGLE_API at 'Directions API'.");
     }
 
+    // return res.status(999).json({ res_test: FETCH_google_Directions.data });
+
     // total_distance = FETCH_google_Directions.data.routes[0].legs[0].distance.value
     // first_start_location = FETCH_google_Directions.data.routes[0].legs[0].start_location.lat & long
     // last_end_location = FETCH_google_Directions.data.routes[0].legs[0].end_location.lat & long
@@ -105,6 +107,7 @@ exports.getFullPath = async (req, res, next) => {
       ) {
         continue;
       }
+
       if (
         Boolean(
           copied_FETCH_google_Directions_steps[x + 1] &&
@@ -140,6 +143,33 @@ exports.getFullPath = async (req, res, next) => {
         // console.log(data_x);
 
         DISTANCE_EXCEED_300 = true;
+        // const FETCH_google_SnapToRoads = await GoogleAPI.getSnapToRoads([
+        //   new Location_OBJ(
+        //     data_x.start_location.lat,
+        //     data_x.start_location.lng
+        //   ),
+        //   new Location_OBJ(data_x.end_location.lat, data_x.end_location.lng),
+        // ]);
+
+        // console.log([
+        //   new Location_OBJ(
+        //     data_x.start_location.lat,
+        //     data_x.start_location.lng
+        //   ),
+        //   new Location_OBJ(data_x.end_location.lat, data_x.end_location.lng),
+        // ]);
+        // console.log(
+        //   'FETCH_google_SnapToRoads.data.hasOwnProperty("warningMessage")',
+        //   FETCH_google_SnapToRoads.data.hasOwnProperty("warningMessage")
+        // );
+
+        // if (
+        //   FETCH_google_SnapToRoads.isError === false &&
+        //   FETCH_google_SnapToRoads.data.hasOwnProperty("warningMessage") ===
+        //     true
+        // ) {
+        // DISTANCE_EXCEED_300 = true;
+        // }
       }
 
       switch (true) {
@@ -180,7 +210,7 @@ exports.getFullPath = async (req, res, next) => {
           if (getLatLngBetweenPoint.isError === true) {
             throw new Error("Error GOOGLE_API at 'getBetweenPoint'");
           }
-          // console.log(a.data);
+          console.log(getLatLngBetweenPoint.data);
 
           getLatLngBetweenPoint.data.forEach((item) => {
             ARR_PATH.push(item);
