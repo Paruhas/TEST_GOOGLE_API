@@ -7,4 +7,11 @@ class Location_OBJ {
   }
 }
 
+/**
+ location: {
+  latitude,
+  longitude,
+ },
+ */
+
 module.exports = Location_OBJ;

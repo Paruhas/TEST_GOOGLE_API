@@ -2,6 +2,7 @@ const axios = require("axios");
 const Decimal = require("../Decimal");
 const Validator = require("../Validator");
 const Location_OBJ = require("../Class/Location_OBJ");
+const Polyline = require("../Function/Polyline");
 
 exports.getSnapToRoads = async (PATH) => {
   const res = {
@@ -54,9 +55,13 @@ exports.getSnapToRoads = async (PATH) => {
       url: `${process.env.GOOGLE_API_ROADS_URL}/snapToRoads${PARAMETER}`,
       headers: {},
     };
-    console.log(configs.url);
+    console.log({ "URL_GoogleAPI.getSnapToRoads": configs.url });
 
     const FETCH = await axios(configs);
+
+    if (FETCH.data.hasOwnProperty("error")) {
+      throw new Error(FETCH.data.error.status);
+    }
 
     res.isError = false;
     res.data = FETCH.data;
@@ -71,7 +76,13 @@ exports.getSnapToRoads = async (PATH) => {
   return res;
 };
 
-exports.getDirections = async (STARTING_POINT, DESTINATION_POINT) => {
+exports.getDirections = async (
+  STARTING_POINT,
+  DESTINATION_POINT,
+  ALTERNATIVES,
+  AVOID,
+  MODE
+) => {
   const res = {
     isError: false,
     data: null,
@@ -116,9 +127,9 @@ exports.getDirections = async (STARTING_POINT, DESTINATION_POINT) => {
         break;
     }
 
-    let alternatives = false; // false for get only 1 path
-    let avoid = "indoor"; // "tolls|highways|ferries|indoor";
-    let mode = ""; // "driving";
+    let alternatives = ALTERNATIVES || false; // false for get only 1 path
+    let avoid = AVOID || ""; // "tolls|highways|ferries|indoor";
+    let mode = MODE || "driving "; // "driving";
 
     const PARAMETER = `?origin=${STARTING_POINT.latitude},${STARTING_POINT.longitude}&destination=${DESTINATION_POINT.latitude},${DESTINATION_POINT.longitude}&alternatives=${alternatives}&avoid=${avoid}&mode=${mode}&key=${process.env.GOOGLE_API_KEY}`;
 
@@ -127,9 +138,13 @@ exports.getDirections = async (STARTING_POINT, DESTINATION_POINT) => {
       url: `${process.env.GOOGLE_API_MAPS_URL}/directions/json${PARAMETER}`,
       headers: {},
     };
-    console.log(configs.url);
+    console.log({ "URL_GoogleAPI.getDirections": configs.url });
 
     const FETCH = await axios(configs);
+
+    if (FETCH.data.status !== "OK") {
+      throw new Error(FETCH.data.status);
+    }
 
     res.isError = false;
     res.data = FETCH.data;
@@ -278,4 +293,174 @@ exports.getBetweenPoint = (DISTANCE, START_LOCATION_OBJ, END_LOCATION_OBJ) => {
   }
 
   return res;
+};
+
+exports.getShortestRoutes_fromGoogleDirections = (arr) => {
+  try {
+    let shortest = arr[0];
+
+    for (let i = 1; i < arr.length; i++) {
+      if (arr[i].legs[0].distance.value < shortest.legs[0].distance.value) {
+        shortest = arr[i];
+      }
+    }
+
+    return { isError: false, data: shortest };
+  } catch (error) {
+    console.log(error.message);
+
+    return { isError: true, data: error.message || null };
+  }
+};
+
+exports.decodeMAPS = (arr_steps) => {
+  const res = {
+    isError: false,
+    data: null,
+  };
+  const arr_res = [];
+  let arr_separate = [];
+
+  try {
+    for (let x = 0; x < arr_steps.length; x++) {
+      const data_x = arr_steps[x];
+
+      if (
+        data_x.maneuver &&
+        Decimal.OP(data_x.maneuver.search("uturn"), -1, "!=")
+      ) {
+        if (arr_separate.length !== 0) {
+          arr_res.push(arr_separate);
+
+          arr_separate = [];
+        }
+
+        continue;
+      }
+
+      if (Decimal.OP(data_x.distance.value, 300, ">")) {
+        if (arr_separate.length !== 0) {
+          arr_res.push(arr_separate);
+
+          arr_separate = [];
+        }
+
+        const res_Polyline_decode = Polyline.decode(data_x.polyline.points);
+        const res_Polyline_clean = Polyline.clean(res_Polyline_decode);
+
+        res_Polyline_clean.forEach((item) => {
+          item.maneuver = data_x.maneuver || null;
+        });
+
+        res_Polyline_clean.unshift("POLYLINE");
+
+        arr_res.push(res_Polyline_clean);
+
+        continue;
+      }
+
+      const start = new Location_OBJ(
+        data_x.start_location.lat,
+        data_x.start_location.lng
+      );
+      const end = new Location_OBJ(
+        data_x.end_location.lat,
+        data_x.end_location.lng
+      );
+      start.maneuver = data_x.maneuver || null;
+      end.maneuver = data_x.maneuver || null;
+
+      arr_separate.push(start, end);
+
+      if (Decimal.OP(x, arr_steps.length - 1, "=")) {
+        if (arr_separate.length !== 0) {
+          arr_res.push(arr_separate);
+        }
+      }
+    }
+
+    res.isError = false;
+    res.data = arr_res;
+  } catch (error) {
+    console.log(error.message);
+
+    res.isError = true;
+    res.data = error.message || null;
+  }
+
+  return res;
+};
+
+exports.getSnapToRoads_V2 = async (arr3d) => {
+  try {
+    let res = undefined;
+
+    if (arr3d[0] !== "POLYLINE") {
+      let interpolate = true;
+      let path = "";
+
+      for (let x = 0; x < arr3d.length; x++) {
+        const data_x = arr3d[x].location;
+
+        path =
+          path +
+          (Decimal.OP(path.length, 0, "=") ? "" : "|") +
+          data_x.latitude +
+          "," +
+          data_x.longitude;
+      }
+
+      const PARAMETER = `?interpolate=${interpolate}&path=${path}&key=${process.env.GOOGLE_API_KEY}`;
+
+      const configs = {
+        method: "get",
+        url: `${process.env.GOOGLE_API_ROADS_URL}/snapToRoads${PARAMETER}`,
+        headers: {},
+      };
+      console.log({ "URL_GoogleAPI.getSnapToRoads_V2": configs.url });
+
+      const FETCH = await axios(configs);
+
+      if (FETCH.data.hasOwnProperty("error")) {
+        throw new Error(FETCH.data.error.status);
+      }
+
+      res = FETCH.data.snappedPoints;
+
+      let OBJ_last_LatLng = {
+        lat: "",
+        lng: "",
+      };
+      res = res.filter((item) => {
+        if (
+          OBJ_last_LatLng.lat === item.location.latitude &&
+          OBJ_last_LatLng.lng === item.location.longitude
+        ) {
+          OBJ_last_LatLng.lat = item.location.latitude;
+          OBJ_last_LatLng.lng = item.location.longitude;
+
+          return;
+        }
+
+        OBJ_last_LatLng.lat = item.location.latitude;
+        OBJ_last_LatLng.lng = item.location.longitude;
+
+        item.maneuver = arr3d[0].maneuver;
+
+        return item;
+      });
+    }
+
+    if (arr3d[0] === "POLYLINE") {
+      arr3d.shift();
+
+      res = arr3d;
+    }
+
+    return res;
+  } catch (error) {
+    console.log(error);
+
+    return null;
+  }
 };

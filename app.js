@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 
   return res.status(500).json({
     res_code: "8888",
-    res_message: `Error. ${err.message}`,
+    res_message: `ERROR. ${err.message}`,
     res_data: {},
   });
 });

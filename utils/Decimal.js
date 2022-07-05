@@ -190,3 +190,15 @@ exports.roundNumber = (input1) => {
 
   return res;
 };
+
+exports.roundNumber_decimal = (input1, input2) => {
+  let res = new Decimal(input1).toFixed(input2);
+
+  const res_decimalPlaces = new Decimal(res).decimalPlaces();
+
+  if (new Decimal(res_decimalPlaces).greaterThan(8)) {
+    res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+  }
+
+  return res;
+};
