@@ -138,7 +138,10 @@ exports.getFullPath = async (req, res, next) => {
         "!="
       )
     ) {
-      result.snappedPoints.unshift(result.client_start_location);
+      const start = result.client_start_location;
+      start.maneuver = null;
+
+      result.snappedPoints.unshift(start);
     }
 
     if (
@@ -161,7 +164,10 @@ exports.getFullPath = async (req, res, next) => {
         "!="
       )
     ) {
-      result.snappedPoints.push(result.client_end_location);
+      const end = result.client_end_location;
+      end.maneuver = null;
+
+      result.snappedPoints.push(end);
     }
 
     return res.status(200).json({

@@ -92,7 +92,7 @@ exports.clean = (input1) => {
     let arr = { latitude: "", longitude: "" };
 
     for (let x = 0; x < input1.length; x++) {
-      data_x = input1[x];
+      const data_x = input1[x];
 
       if (x === 0) {
         arr.latitude = data_x.latitude;

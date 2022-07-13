@@ -71,4 +71,4 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port: ${PORT}`);
 });
 
-// require("./test.js");
+// require("./bin/test.js");
