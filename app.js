@@ -1,74 +1,45 @@
 require("dotenv").config();
 const express = require("express");
-const { default: axios } = require("axios");
 
+const { logger: logMiddleware } = require("./middleware/log.js");
+const homeMiddleware = require("./middleware/home.js");
+const versionCheck = require("./middleware/version_check.js");
+const errorMiddleware = require("./middleware/error.js");
+const pathErrorMiddleware = require("./middleware/path_error.js");
 const googleApiRouter = require("./routes/googleApiRoute");
 
 const app = express();
 const PORT = process.env.PORT || 60061;
+const SERVER = process.env.SERVER || 60061;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(logMiddleware);
+
 // Homepage
-app.get("/", (req, res, next) => {
-  try {
-    return res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-        <head>
-          <meta charset="UTF-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>test-google-api</title>
-        </head>
-        <body></body>
-      </html>
-      <html lang="en">
-        <head>
-          <title>test-google-api</title>
-          <meta charset="utf-8" />
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        </head>
-        <body
-          data-new-gr-c-s-check-loaded="14.1042.0"
-          data-gr-ext-installed=""
-          class="vsc-initialized"
-        >
-          <div class="info">
-            <h1>test-google-api</h1>
-            <h2>Welcome to API HomePage</h2>
-          </div>
-        </body>
-      </html>
-    `);
-  } catch (error) {
-    next(error);
-  }
-});
+app.get("/", homeMiddleware);
+app.get("/api/version/001", versionCheck);
 
 app.use("/google-api", googleApiRouter);
 
 // Error Path
-app.use((err, req, res, next) => {
-  console.log(err.message);
-
-  return res.status(500).json({
-    res_code: "8888",
-    res_message: `ERROR. ${err.message}`,
-    res_data: {},
-  });
-});
+app.use(errorMiddleware);
 
 // Incorrect Path
-app.use("*", (req, res, next) => {
-  return res
-    .status(404)
-    .json({ res_code: "9999", res_message: "Path not found.", res_data: {} });
-});
+app.use("*", pathErrorMiddleware);
 
 app.listen(PORT, async () => {
-  console.log(`Server is running on port: ${PORT}`);
+  console.log(
+    `
+  =====================================
+
+    Server is running on port: ${PORT}
+    Currently running server: ${SERVER}
+
+  =====================================
+`
+  );
 });
 
 // require("./bin/test.js");

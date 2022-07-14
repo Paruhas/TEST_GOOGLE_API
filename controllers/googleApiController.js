@@ -1,7 +1,6 @@
-const Decimal = require("../utils/Decimal");
+const Decimal = require("../utils/Function/Decimal");
 const Location_OBJ = require("../utils/Class/Location_OBJ.js");
 const GoogleAPI = require("../utils/Function/GoogleAPI.js");
-const Polyline = require("../utils/Function/Polyline");
 
 exports.getRoadsApi_snapToRoads = async (req, res, next) => {
   try {
@@ -66,6 +65,7 @@ exports.getFullPath = async (req, res, next) => {
     const result = {
       "total_distance(only road and before cut uturn)":
         FETCH_google_Directions.data.routes[0].legs[0].distance.value,
+      "total_distance(cut uturn)": 0,
       client_start_location: new Location_OBJ(
         STARTING_POINT.latitude,
         STARTING_POINT.longitude
@@ -89,6 +89,23 @@ exports.getFullPath = async (req, res, next) => {
       JSON.stringify(FETCH_google_Directions.data.routes[0].legs[0].steps)
     );
     // console.log(copied_FETCH_google_Directions_steps);
+
+    for (let x = 0; x < copied_FETCH_google_Directions_steps.length; x++) {
+      const data_x = copied_FETCH_google_Directions_steps[x];
+
+      if (
+        data_x.distance &&
+        data_x.distance.value &&
+        (!data_x.maneuver ||
+          (data_x.maneuver &&
+            Decimal.OP(data_x.maneuver.search("uturn"), -1, "=")))
+      ) {
+        result["total_distance(cut uturn)"] = Decimal.plus(
+          result["total_distance(cut uturn)"],
+          data_x.distance.value
+        );
+      }
+    }
 
     const FETCH_decodeMAPS = GoogleAPI.decodeMAPS(
       copied_FETCH_google_Directions_steps
@@ -174,9 +191,9 @@ exports.getFullPath = async (req, res, next) => {
       res_code: "0000",
       res_message: `Request successful.`,
       res_data: {
-        MAP_API: FETCH_google_Directions.data,
-        ARR3D_PATH,
-        res_promiseAll_getSnapToRoads_V2,
+        // MAP_API: FETCH_google_Directions.data,
+        // ARR3D_PATH,
+        // res_promiseAll_getSnapToRoads_V2,
         result,
       },
     });

@@ -1,23 +1,23 @@
-exports.encode = (arr3d, options_precision) => {
-  const defaultOptions_precision = function (options) {
-    if (typeof options === "number") {
-      // Legacy
-      options = {
-        precision: options,
-      };
-    } else {
-      options = options || {};
-    }
+// exports.encode = (arr3d, options_precision) => {
+//   const defaultOptions_precision = function (options) {
+//     if (typeof options === "number") {
+//       // Legacy
+//       options = {
+//         precision: options,
+//       };
+//     } else {
+//       options = options || {};
+//     }
 
-    options.precision = options.precision || 5;
-    options.factor = options.factor || Math.pow(10, options.precision);
-    options.dimension = options.dimension || 2;
+//     options.precision = options.precision || 5;
+//     options.factor = options.factor || Math.pow(10, options.precision);
+//     options.dimension = options.dimension || 2;
 
-    return options;
-  };
+//     return options;
+//   };
 
-  options_precision;
-};
+//   options_precision;
+// };
 
 exports.decode = (polyline) => {
   let _ = {};
@@ -124,7 +124,7 @@ exports.clean = (input1) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 
   return res;

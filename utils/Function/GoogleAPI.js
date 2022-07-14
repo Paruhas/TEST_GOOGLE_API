@@ -1,8 +1,9 @@
 const axios = require("axios");
-const Decimal = require("../Decimal");
+const Decimal = require("./Decimal");
 const Validator = require("../Validator");
 const Location_OBJ = require("../Class/Location_OBJ");
 const Polyline = require("../Function/Polyline");
+const { readLogFile, writeLogFile } = require("../Function/LogFile");
 
 exports.getSnapToRoads = async (PATH) => {
   const res = {
@@ -55,7 +56,11 @@ exports.getSnapToRoads = async (PATH) => {
       url: `${process.env.GOOGLE_API_ROADS_URL}/snapToRoads${PARAMETER}`,
       headers: {},
     };
-    console.log({ "URL_GoogleAPI.getSnapToRoads": configs.url });
+    // console.log({ "URL_GoogleAPI.getSnapToRoads": configs.url });
+    writeLogFile(
+      { GOOGLE_API: "getSnapToRoads", axios_url: configs.url },
+      null
+    );
 
     const FETCH = await axios(configs);
 
@@ -67,7 +72,7 @@ exports.getSnapToRoads = async (PATH) => {
     res.data = FETCH.data;
     res.url = configs.url;
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
 
     res.isError = true;
     res.data = error.message;
@@ -138,7 +143,8 @@ exports.getDirections = async (
       url: `${process.env.GOOGLE_API_MAPS_URL}/directions/json${PARAMETER}`,
       headers: {},
     };
-    console.log({ "URL_GoogleAPI.getDirections": configs.url });
+    // console.log({ "URL_GoogleAPI.getDirections": configs.url });
+    writeLogFile({ GOOGLE_API: "getDirections", axios_url: configs.url }, null);
 
     const FETCH = await axios(configs);
 
@@ -150,7 +156,7 @@ exports.getDirections = async (
     res.data = FETCH.data;
     res.url = configs.url;
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
 
     res.isError = true;
     res.data = error.message || null;
@@ -286,7 +292,7 @@ exports.getBetweenPoint = (DISTANCE, START_LOCATION_OBJ, END_LOCATION_OBJ) => {
       new Location_OBJ(end_location.latitude, end_location.longitude)
     );
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
 
     res.isError = true;
     res.data = error.message || null;
@@ -307,7 +313,7 @@ exports.getShortestRoutes_fromGoogleDirections = (arr) => {
 
     return { isError: false, data: shortest };
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
 
     return { isError: true, data: error.message || null };
   }
@@ -382,7 +388,7 @@ exports.decodeMAPS = (arr_steps) => {
     res.isError = false;
     res.data = arr_res;
   } catch (error) {
-    console.log(error.message);
+    // console.log(error.message);
 
     res.isError = true;
     res.data = error.message || null;
@@ -392,9 +398,8 @@ exports.decodeMAPS = (arr_steps) => {
 };
 
 exports.getSnapToRoads_V2 = async (arr3d) => {
+  let res = "";
   try {
-    let res = undefined;
-
     if (arr3d[0] !== "POLYLINE") {
       let interpolate = true;
       let path = "";
@@ -417,7 +422,11 @@ exports.getSnapToRoads_V2 = async (arr3d) => {
         url: `${process.env.GOOGLE_API_ROADS_URL}/snapToRoads${PARAMETER}`,
         headers: {},
       };
-      console.log({ "URL_GoogleAPI.getSnapToRoads_V2": configs.url });
+      // console.log({ "URL_GoogleAPI.getSnapToRoads_V2": configs.url });
+      writeLogFile(
+        { GOOGLE_API: "getSnapToRoads_V2", axios_url: configs.url },
+        null
+      );
 
       const FETCH = await axios(configs);
 
@@ -459,8 +468,8 @@ exports.getSnapToRoads_V2 = async (arr3d) => {
 
     return res;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
-    return null;
+    return res;
   }
 };
