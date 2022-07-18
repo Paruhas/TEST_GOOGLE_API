@@ -1,12 +1,22 @@
 const Decimal = require("../utils/Function/Decimal");
 const Location_OBJ = require("../utils/Class/Location_OBJ.js");
 const GoogleAPI = require("../utils/Function/GoogleAPI.js");
+const { writeLogFile } = require("../utils/Function/LogFile");
 
 exports.getRoadsApi_snapToRoads = async (req, res, next) => {
   try {
     const { PATH } = req.body;
 
     const FETCH_google_SnapToRoads = await GoogleAPI.getSnapToRoads(PATH);
+
+    writeLogFile(
+      {
+        SERVICE_TYPE: "ROUTE",
+        SERVICE_NAME: "getRoadsApi_snapToRoads",
+        SERVICE_DATA: { res_data: FETCH_google_SnapToRoads },
+      },
+      null
+    );
 
     return res.status(200).json({
       res_code: "0000",
@@ -25,6 +35,15 @@ exports.getMapsApi_directions = async (req, res, next) => {
     const FETCH_google_Directions = await GoogleAPI.getDirections(
       STARTING_POINT,
       DESTINATION_POINT
+    );
+
+    writeLogFile(
+      {
+        SERVICE_TYPE: "ROUTE",
+        SERVICE_NAME: "getMapsApi_directions",
+        SERVICE_DATA: { res_data: FETCH_google_Directions },
+      },
+      null
     );
 
     return res.status(200).json({
@@ -186,6 +205,15 @@ exports.getFullPath = async (req, res, next) => {
 
       result.snappedPoints.push(end);
     }
+
+    writeLogFile(
+      {
+        SERVICE_TYPE: "ROUTE",
+        SERVICE_NAME: "getFullPath",
+        SERVICE_DATA: { res_data: result },
+      },
+      null
+    );
 
     return res.status(200).json({
       res_code: "0000",

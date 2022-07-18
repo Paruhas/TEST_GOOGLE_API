@@ -58,7 +58,11 @@ exports.getSnapToRoads = async (PATH) => {
     };
     // console.log({ "URL_GoogleAPI.getSnapToRoads": configs.url });
     writeLogFile(
-      { GOOGLE_API: "getSnapToRoads", axios_url: configs.url },
+      {
+        SERVICE_TYPE: "GOOGLE_API",
+        SERVICE_NAME: "getSnapToRoads",
+        SERVICE_DATA: { axios_url: configs.url },
+      },
       null
     );
 
@@ -144,7 +148,14 @@ exports.getDirections = async (
       headers: {},
     };
     // console.log({ "URL_GoogleAPI.getDirections": configs.url });
-    writeLogFile({ GOOGLE_API: "getDirections", axios_url: configs.url }, null);
+    writeLogFile(
+      {
+        SERVICE_TYPE: "GOOGLE_API",
+        SERVICE_NAME: "getDirections",
+        SERVICE_DATA: { axios_url: configs.url },
+      },
+      null
+    );
 
     const FETCH = await axios(configs);
 
@@ -424,7 +435,11 @@ exports.getSnapToRoads_V2 = async (arr3d) => {
       };
       // console.log({ "URL_GoogleAPI.getSnapToRoads_V2": configs.url });
       writeLogFile(
-        { GOOGLE_API: "getSnapToRoads_V2", axios_url: configs.url },
+        {
+          SERVICE_TYPE: "GOOGLE_API",
+          SERVICE_NAME: "getSnapToRoads_V2",
+          SERVICE_DATA: { axios_url: configs.url },
+        },
         null
       );
 
