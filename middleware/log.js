@@ -1,5 +1,3 @@
-const { readLogFile, writeLogFile } = require("../utils/Function/LogFile");
-
 const logger = (req, res, next) => {
   try {
     // console.log(`${req.method} ${req.originalUrl} [STARTED]`);
@@ -41,7 +39,5 @@ const logger = (req, res, next) => {
 };
 
 module.exports = {
-  readLogFile,
-  writeLogFile,
   logger,
 };

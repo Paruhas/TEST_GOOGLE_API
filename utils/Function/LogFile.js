@@ -17,12 +17,12 @@ const readLogFile = async () => {
     log = JSON.parse(log_json);
     // console.log(log);
   } catch (error) {
-    log.error.push({
-      time_th: date_th_isoString,
-      error_stack: error.stack,
-      error_message: error.message,
-    });
-    // console.log(log);
+    // log.error.push({
+    //   time_th: date_th_isoString,
+    //   error_stack: error.stack,
+    //   error_message: error.message,
+    // });
+    // // console.log(log);
 
     fs.writeFileSync(
       `./logs/log_${date_th_dateOnly}.json`,
