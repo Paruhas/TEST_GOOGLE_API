@@ -10,7 +10,7 @@ const googleApiRouter = require("./routes/googleApiRoute");
 
 const app = express();
 const PORT = process.env.PORT || 60061;
-const SERVER = process.env.SERVER || 60061;
+const SERVER = process.env.SERVER || "DEV";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
