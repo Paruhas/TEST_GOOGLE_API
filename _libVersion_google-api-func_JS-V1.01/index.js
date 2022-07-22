@@ -172,24 +172,34 @@ const Decimal = {
 
     return res;
   },
+  // FOR res type INTEGER
   roundNumber: (input1) => {
-    let res = new DecimalJS(input1).round().toFixed();
+    input1 = Decimal.changeInput(input1 || 0);
+
+    let res = new DecimalJS(input1).round();
+    res = new DecimalJS(res).toFixed();
 
     const res_decimalPlaces = new DecimalJS(res).decimalPlaces();
 
     if (new DecimalJS(res_decimalPlaces).greaterThan(8)) {
-      res = new DecimalJS(res).toFixed(8, DecimalJS.ROUND_DOWN);
+      // res = new DecimalJS(res).toFixed(8, DecimalJS.ROUND_DOWN);
+      res = new DecimalJS(res).toFixed(8);
     }
 
     return res;
   },
+  // FOR res type FLOAT
   roundNumber_decimal: (input1, input2) => {
+    input1 = Decimal.changeInput(input1 || 0);
+    input2 = Decimal.changeInput(input2 || 0);
+
     let res = new DecimalJS(input1).toFixed(input2);
 
     const res_decimalPlaces = new DecimalJS(res).decimalPlaces();
 
     if (new DecimalJS(res_decimalPlaces).greaterThan(8)) {
-      res = new DecimalJS(res).toFixed(8, DecimalJS.ROUND_DOWN);
+      // res = new DecimalJS(res).toFixed(8, DecimalJS.ROUND_DOWN);
+      res = new DecimalJS(res).toFixed(8);
     }
 
     return res;

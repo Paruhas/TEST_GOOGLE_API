@@ -179,25 +179,35 @@ exports.getAllowDecimal = (input1) => {
   return res;
 };
 
+// FOR res type INTEGER
 exports.roundNumber = (input1) => {
-  let res = new Decimal(input1).round().toFixed();
+  input1 = changeInput(input1 || 0);
+
+  let res = new Decimal(input1).round();
+  res = new Decimal(res).toFixed();
 
   const res_decimalPlaces = new Decimal(res).decimalPlaces();
 
   if (new Decimal(res_decimalPlaces).greaterThan(8)) {
-    res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+    // res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+    res = new Decimal(res).toFixed(8);
   }
 
   return res;
 };
 
+// FOR res type FLOAT
 exports.roundNumber_decimal = (input1, input2) => {
+  input1 = changeInput(input1 || 0);
+  input2 = changeInput(input2 || 0);
+
   let res = new Decimal(input1).toFixed(input2);
 
   const res_decimalPlaces = new Decimal(res).decimalPlaces();
 
   if (new Decimal(res_decimalPlaces).greaterThan(8)) {
-    res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+    // res = new Decimal(res).toFixed(8, Decimal.ROUND_DOWN);
+    res = new Decimal(res).toFixed(8);
   }
 
   return res;
